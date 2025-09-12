@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧠 ULTIMATE ADHD BRAIN ARCADE 🕹️</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Main Hub -->
+    <div id="hub" class="hub">
+        <header class="hub-header">
+            <h1 class="arcade-title">🧠 ULTIMATE ADHD BRAIN ARCADE 🕹️</h1>
+            <div class="stats-ticker">
+                <div class="stat-item">
+                    <span class="stat-label">Level</span>
+                    <span id="current-level" class="stat-value">1</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">XP</span>
+                    <span id="current-xp" class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Streak</span>
+                    <span id="current-streak" class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Achievements</span>
+                    <span id="achievements-count" class="stat-value">0/25</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Energy Level Selector -->
+        <div class="energy-selector">
+            <h3>🌟 How's your energy today?</h3>
+            <div class="energy-buttons">
+                <button class="btn energy-btn" data-energy="low">
+                    <span class="energy-icon">🌙</span>
+                    <div>
+                        <strong>Low Energy</strong>
+                        <small>Calm & Focused</small>
+                    </div>
+                </button>
+                <button class="btn energy-btn active" data-energy="medium">
+                    <span class="energy-icon">☀️</span>
+                    <div>
+                        <strong>Medium Energy</strong>
+                        <small>Ready to Learn</small>
+                    </div>
+                </button>
+                <button class="btn energy-btn" data-energy="high">
+                    <span class="energy-icon">⚡</span>
+                    <div>
+                        <strong>High Energy</strong>
+                        <small>Challenge Mode!</small>
+                    </div>
+                </button>
+            </div>
+            <div class="energy-recommendation" id="energy-recommendation">
+                <span class="recommendation-icon">💡</span>
+                <span id="recommendation-text">Perfect for balanced training sessions</span>
+            </div>
+        </div>
+
+        <!-- Game Categories -->
+        <div class="arcade-floor">
+            <div class="game-machine focus-machine" data-category="focus_primers">
+                <div class="machine-glow"></div>
+                <div class="machine-header">
+                    <div class="machine-icon">⚡</div>
+                    <h3 class="machine-title">Focus Primers</h3>
+                    <div class="difficulty-indicator" id="focus-difficulty">Level 1</div>
+                </div>
+                <p class="machine-description">⏱️ Quick warm-ups to activate your focus</p>
+                <div class="machine-stats">
+                    <span class="games-completed">0/4 games mastered</span>
+                    <div class="category-progress">
+                        <div class="progress-bar-small">
+                            <div class="progress-fill-small" id="focus-progress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cognitive-benefits">
+                    <span class="benefit-tag">Visual Attention</span>
+                    <span class="benefit-tag">Working Memory</span>
+                </div>
+            </div>
+
+            <div class="game-machine attention-machine" data-category="attention_switchers">
+                <div class="machine-glow"></div>
+                <div class="machine-header">
+                    <div class="machine-icon">⚙️</div>
+                    <h3 class="machine-title">Attention Switchers</h3>
+                    <div class="difficulty-indicator" id="attention-difficulty">Level 1</div>
+                </div>
+                <p class="machine-description">🔄 Master the art of attention switching</p>
+                <div class="machine-stats">
+                    <span class="games-completed">0/4 games mastered</span>
+                    <div class="category-progress">
+                        <div class="progress-bar-small">
+                            <div class="progress-fill-small" id="attention-progress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cognitive-benefits">
+                    <span class="benefit-tag">Cognitive Flexibility</span>
+                    <span class="benefit-tag">Inhibitory Control</span>
+                </div>
+            </div>
+
+            <div class="game-machine flow-machine" data-category="flow_finders">
+                <div class="machine-glow"></div>
+                <div class="machine-header">
+                    <div class="machine-icon">🎯</div>
+                    <h3 class="machine-title">Flow Finders</h3>
+                    <div class="difficulty-indicator" id="flow-difficulty">Level 1</div>
+                </div>
+                <p class="machine-description">🌊 Get into the zone with rhythm and focus</p>
+                <div class="machine-stats">
+                    <span class="games-completed">0/4 games mastered</span>
+                    <div class="category-progress">
+                        <div class="progress-bar-small">
+                            <div class="progress-fill-small" id="flow-progress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cognitive-benefits">
+                    <span class="benefit-tag">Sustained Attention</span>
+                    <span class="benefit-tag">Flow State</span>
+                </div>
+            </div>
+
+            <div class="game-machine break-machine" data-category="break_boosters">
+                <div class="machine-glow"></div>
+                <div class="machine-header">
+                    <div class="machine-icon">🔄</div>
+                    <h3 class="machine-title">Break Boosters</h3>
+                    <div class="difficulty-indicator" id="break-difficulty">Level 1</div>
+                </div>
+                <p class="machine-description">💆 Refresh your brain between tasks</p>
+                <div class="machine-stats">
+                    <span class="games-completed">0/4 games mastered</span>
+                    <div class="category-progress">
+                        <div class="progress-bar-small">
+                            <div class="progress-fill-small" id="break-progress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cognitive-benefits">
+                    <span class="benefit-tag">Mindfulness</span>
+                    <span class="benefit-tag">Recovery</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Daily Challenge -->
+        <div class="daily-challenge-card">
+            <div class="challenge-header">
+                <span class="challenge-icon">🏆</span>
+                <h4>Today's Challenge</h4>
+                <span class="challenge-timer" id="challenge-timer">23:42:15</span>
+            </div>
+            <p id="daily-challenge-text">Complete 3 different game categories today!</p>
+            <div class="challenge-reward">+100 XP Bonus</div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="hub-actions">
+            <button class="btn btn--primary stats-btn" id="show-stats">
+                📊 Stats & Achievements
+            </button>
+            <button class="btn btn--secondary" id="quick-play">
+                🚀 Quick Play (Recommended)
+            </button>
+        </div>
+    </div>
+
+    <!-- Game Selection Screen -->
+    <div id="game-selection" class="game-selection hidden">
+        <div class="selection-header">
+            <button class="btn btn--outline back-btn" id="back-to-hub">← Back to Arcade</button>
+            <h2 id="category-title" class="category-title"></h2>
+            <div class="category-meta">
+                <span id="category-description"></span>
+            </div>
+        </div>
+        <div class="games-grid" id="games-list"></div>
+    </div>
+
+    <!-- Game Play Screen -->
+    <div id="game-play" class="game-play hidden">
+        <div class="game-header">
+            <button class="btn btn--outline back-btn" id="back-to-selection">← Back</button>
+            <div class="game-info">
+                <h3 id="game-title" class="game-title"></h3>
+                <div class="game-meta">
+                    <span id="current-score" class="score-display">Score: 0</span>
+                    <span id="streak-counter" class="streak-display">Streak: 0</span>
+                </div>
+            </div>
+            <div class="game-timer">
+                <div class="timer-circle">
+                    <span id="timer-display">0:00</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="game-area">
+            <div id="game-content" class="game-content">
+                <!-- Game content will be dynamically inserted here -->
+            </div>
+            
+            <div class="game-controls">
+                <button class="btn btn--primary" id="start-game">🎮 Start Game</button>
+                <button class="btn btn--secondary hidden" id="pause-game">⏸️ Pause</button>
+                <button class="btn btn--outline hidden" id="finish-game">🏁 Finish</button>
+            </div>
+        </div>
+
+        <!-- Real-time Feedback -->
+        <div class="live-feedback" id="live-feedback">
+            <div class="feedback-item">
+                <span class="feedback-label">Accuracy:</span>
+                <span id="live-accuracy">100%</span>
+            </div>
+            <div class="feedback-item">
+                <span class="feedback-label">Avg Response:</span>
+                <span id="avg-response">0ms</span>
+            </div>
+            <div class="feedback-item">
+                <span class="feedback-label">Difficulty:</span>
+                <span id="current-difficulty">Auto</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Results Screen -->
+    <div id="game-results" class="game-results hidden">
+        <div class="results-content">
+            <div class="results-celebration">
+                <div class="celebration-icon" id="celebration-icon">🎉</div>
+                <h2 id="results-title">Great Job!</h2>
+            </div>
+            
+            <div class="results-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">⚡</div>
+                    <div class="stat-info">
+                        <span class="stat-number" id="final-score">0</span>
+                        <span class="stat-label">Final Score</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-info">
+                        <span class="stat-number" id="final-accuracy">0%</span>
+                        <span class="stat-label">Accuracy</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💎</div>
+                    <div class="stat-info">
+                        <span class="stat-number" id="xp-earned">+0</span>
+                        <span class="stat-label">XP Gained</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="performance-insights">
+                <h4>🧠 Performance Insights</h4>
+                <div id="insights-list"></div>
+            </div>
+
+            <div class="results-actions">
+                <button class="btn btn--primary" id="play-again">🔄 Play Again</button>
+                <button class="btn btn--secondary" id="try-different">🎮 Try Different Game</button>
+                <button class="btn btn--outline" id="back-to-hub-results">🏠 Back to Hub</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats & Achievements Modal -->
+    <div id="stats-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📊 Your Progress</h2>
+                <button class="modal-close" id="close-stats">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="overview">Overview</button>
+                    <button class="tab-btn" data-tab="achievements">Achievements</button>
+                    <button class="tab-btn" data-tab="analytics">Analytics</button>
+                </div>
+
+                <div id="overview-tab" class="tab-content active">
+                    <div class="level-card">
+                        <div class="level-info">
+                            <span class="current-level-big" id="modal-level">1</span>
+                            <div class="level-details">
+                                <h4>Cognitive Trainee</h4>
+                                <p>Keep training to unlock new features!</p>
+                            </div>
+                        </div>
+                        <div class="level-progress">
+                            <div class="progress-bar">
+                                <div id="xp-progress" class="progress-fill"></div>
+                            </div>
+                            <span id="xp-text">0 / 100 XP to next level</span>
+                        </div>
+                    </div>
+
+                    <div class="category-stats">
+                        <h4>Category Mastery</h4>
+                        <div class="category-grid">
+                            <div class="category-stat">
+                                <div class="category-icon">⚡</div>
+                                <div class="category-info">
+                                    <span class="category-name">Focus Primers</span>
+                                    <div class="mini-progress">
+                                        <div class="mini-progress-fill" id="focus-mini-progress"></div>
+                                    </div>
+                                    <span class="mastery-level" id="focus-mastery">0%</span>
+                                </div>
+                            </div>
+                            <div class="category-stat">
+                                <div class="category-icon">⚙️</div>
+                                <div class="category-info">
+                                    <span class="category-name">Attention Switchers</span>
+                                    <div class="mini-progress">
+                                        <div class="mini-progress-fill" id="attention-mini-progress"></div>
+                                    </div>
+                                    <span class="mastery-level" id="attention-mastery">0%</span>
+                                </div>
+                            </div>
+                            <div class="category-stat">
+                                <div class="category-icon">🎯</div>
+                                <div class="category-info">
+                                    <span class="category-name">Flow Finders</span>
+                                    <div class="mini-progress">
+                                        <div class="mini-progress-fill" id="flow-mini-progress"></div>
+                                    </div>
+                                    <span class="mastery-level" id="flow-mastery">0%</span>
+                                </div>
+                            </div>
+                            <div class="category-stat">
+                                <div class="category-icon">🔄</div>
+                                <div class="category-info">
+                                    <span class="category-name">Break Boosters</span>
+                                    <div class="mini-progress">
+                                        <div class="mini-progress-fill" id="break-mini-progress"></div>
+                                    </div>
+                                    <span class="mastery-level" id="break-mastery">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="achievements-tab" class="tab-content">
+                    <div class="achievements-header">
+                        <h4>🏆 Achievements</h4>
+                        <span id="achievement-progress">0 / 25 Unlocked</span>
+                    </div>
+                    <div id="achievements-list" class="achievements-list"></div>
+                </div>
+
+                <div id="analytics-tab" class="tab-content">
+                    <div class="analytics-section">
+                        <h4>📈 Performance Analytics</h4>
+                        <div class="analytics-cards">
+                            <div class="analytics-card">
+                                <span class="analytics-number" id="total-games">0</span>
+                                <span class="analytics-label">Games Played</span>
+                            </div>
+                            <div class="analytics-card">
+                                <span class="analytics-number" id="total-time">0h</span>
+                                <span class="analytics-label">Training Time</span>
+                            </div>
+                            <div class="analytics-card">
+                                <span class="analytics-number" id="avg-accuracy">0%</span>
+                                <span class="analytics-label">Avg Accuracy</span>
+                            </div>
+                            <div class="analytics-card">
+                                <span class="analytics-number" id="best-streak">0</span>
+                                <span class="analytics-label">Best Streak</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Achievement Notification -->
+    <div id="achievement-notification" class="achievement-notification hidden">
+        <div class="achievement-animation">
+            <div class="achievement-content">
+                <span class="achievement-icon">🏆</span>
+                <div class="achievement-text">
+                    <strong id="achievement-name">Achievement Unlocked!</strong>
+                    <span id="achievement-desc">You've achieved something great!</span>
+                    <span class="achievement-xp">+<span id="achievement-xp-value">0</span> XP</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Level Up Notification -->
+    <div id="levelup-notification" class="levelup-notification hidden">
+        <div class="levelup-animation">
+            <div class="levelup-content">
+                <span class="levelup-icon">⬆️</span>
+                <div class="levelup-text">
+                    <strong>LEVEL UP!</strong>
+                    <span id="levelup-number">Level 2</span>
+                    <span class="levelup-title" id="levelup-title">Cognitive Explorer</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio Controls -->
+    <div class="audio-controls">
+        <button class="audio-btn" id="toggle-sound" title="Toggle Sound">🔊</button>
+        <button class="audio-btn" id="toggle-music" title="Toggle Music">🎵</button>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
