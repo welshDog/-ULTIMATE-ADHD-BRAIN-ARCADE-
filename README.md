@@ -30,7 +30,9 @@
 [![Neurodivergent Friendly](https://img.shields.io/badge/Neurodivergent-Friendly-purple.svg)](https://github.com/topics/neurodivergent)
 [![ADHD Optimized](https://img.shields.io/badge/ADHD-Optimized-orange.svg)](https://github.com/topics/adhd)
 
----
+[💎⚡ SUPPORT THE HYPERFOCUS EMPIRE ⚡💎 – Donation & Sponsorship Portal](https://welshdog.github.io/hyperfocuszone.com-Support-Hub-/)
+
+> Join our Focus Warriors, Elite Agents, and Empire Builders to power next-gen ADHD-friendly tools!
 
 ## 🚀 **LIVE DEMO**
 
