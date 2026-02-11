@@ -1,3 +1,5 @@
+![CI](https://github.com/welshDog/-ULTIMATE-ADHD-BRAIN-ARCADE-/actions/workflows/ci.yml/badge.svg)
+
 # 🧠 ULTIMATE ADHD BRAIN ARCADE 🎮
 
 ```
