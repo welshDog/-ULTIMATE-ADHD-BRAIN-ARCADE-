@@ -1,0 +1,25 @@
+--- Difficulty Analysis Report ---
+
+Case 1: New Player (No stats)
+Input: stats=undefined
+Output: 1
+
+Case 2: Beginner (Low accuracy, few games)
+Input: played=2, avgAccuracy=60
+Output: 1
+
+Case 3: Intermediate (Good accuracy, >2 games)
+Input: played=3, avgAccuracy=80
+Output: 2
+
+Case 4: Advanced (High accuracy, >3 games)
+Input: played=4, avgAccuracy=95
+Output: 4
+
+Case 5: Expert (Perfect accuracy)
+Input: played=10, avgAccuracy=100
+Output: 5
+
+Edge Case: Smurf (High accuracy, 1 game)
+Input: played=1, avgAccuracy=100
+Output: 1

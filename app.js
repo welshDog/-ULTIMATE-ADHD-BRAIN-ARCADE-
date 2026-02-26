@@ -606,7 +606,24 @@ class UltimateADHDBrainArcade {
         this.currentSession.correctAnswers = 0;
         this.currentSession.totalAttempts = 0;
         this.currentSession.currentStreak = 0;
-        this.currentSession.difficulty = this.calculateInitialDifficulty(game.name);
+        
+        // Initialize Difficulty Dial Agent
+        if (typeof DifficultyDial !== 'undefined') {
+            if (!this.difficultyDial) {
+                this.difficultyDial = new DifficultyDial({
+                    windowSize: 5,
+                    boredomThresholdMs: 600, // < 600ms = Fast
+                    frustrationThreshold: 3  // 3 errors = Frustrated
+                });
+            }
+            const initialDiff = this.calculateInitialDifficulty(game.name);
+            this.difficultyDial.reset(initialDiff);
+            this.currentSession.difficulty = initialDiff;
+        } else {
+            // Fallback if agent not loaded
+            this.currentSession.difficulty = this.calculateInitialDifficulty(game.name);
+        }
+
         this.currentSession.gameData = {};
         this.currentSession.responseTimes = [];
         this.currentSession.mistakes = [];
@@ -1417,7 +1434,29 @@ class UltimateADHDBrainArcade {
         this.currentSession.accuracy = Math.round((this.currentSession.correctAnswers / this.currentSession.totalAttempts) * 100);
         
         this.updateLiveFeedback();
-        this.adaptDifficulty();
+        
+        // Use Agent for difficulty adaptation
+        if (this.difficultyDial && this.playerState.preferences.adaptiveDifficulty) {
+            const analysis = this.difficultyDial.recordResponse(isCorrect, responseTime);
+            
+            if (analysis.action !== 'maintain') {
+                const oldDifficulty = this.currentSession.difficulty;
+                this.currentSession.difficulty = analysis.level;
+                
+                // Show feedback if level changed
+                if (oldDifficulty !== this.currentSession.difficulty) {
+                    const msg = analysis.action === 'increase' ? '🚀 Level Up!' : '🛡️ Easing Off...';
+                    this.showFeedback(msg, analysis.action === 'increase' ? 'success' : 'warning');
+                    
+                    // Update UI immediately
+                    const diffEl = document.getElementById('current-difficulty');
+                    if (diffEl) diffEl.textContent = `Level ${this.currentSession.difficulty}`;
+                }
+            }
+        } else {
+            // Fallback to legacy logic
+            this.adaptDifficulty();
+        }
     }
 
     addScore(points) {
