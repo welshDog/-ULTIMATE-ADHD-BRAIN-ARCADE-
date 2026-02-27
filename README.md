@@ -7,14 +7,17 @@ The **Ultimate ADHD Brain Arcade** is a cognitive training platform specifically
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
+![CI/CD](https://github.com/yourusername/ultimate-adhd-brain-arcade/actions/workflows/deploy.yml/badge.svg)
 
 ## 🌟 Key Features
 
-*   **⚡ Focus Primers:** Quick visual games to jumpstart dopamine.
-*   **⚙️ Attention Switchers:** Train cognitive flexibility.
+*   **⚡ Focus Primers:** Quick visual games like **Pattern Blitz** and **Dual N-Back** to jumpstart dopamine.
+*   **⚙️ Attention Switchers:** Train cognitive flexibility with the **Stroop Challenge**.
 *   **🤖 Smart Agents:**
     *   **Difficulty Dial:** Adjusts difficulty instantly if you get bored or frustrated.
     *   **Dopamine DJ:** Drops coins and rewards based on your momentum.
+    *   **Hyperfocus Protector:** Detects "Flow State" and dims distractions to keep you in the zone.
+*   **✨ Juicy Visuals:** Particle effects (confetti, coin showers, brain waves) provide immediate visual feedback.
 *   **🪙 Gamified Economy:** Earn BROski$ coins, unlock achievements, and level up.
 *   **🔋 Energy-Based Recommendations:** Suggests games based on whether you feel Low, Medium, or High energy.
 
@@ -22,7 +25,7 @@ The **Ultimate ADHD Brain Arcade** is a cognitive training platform specifically
 
 ### Prerequisites
 *   A modern web browser (Chrome, Firefox, Edge, Safari).
-*   No installation required for players!
+*   **Node.js** (v18+) is required for development and testing.
 
 ### Installation (Developers)
 1.  **Clone the repository:**
@@ -31,43 +34,49 @@ The **Ultimate ADHD Brain Arcade** is a cognitive training platform specifically
     cd ultimate-adhd-brain-arcade
     ```
 
-2.  **Run Locally:**
+2.  **Install Dependencies:**
+    ```bash
+    npm ci
+    ```
+
+3.  **Run Locally:**
     Since this is a vanilla JS app, you can just open `index.html` in your browser.
     
-    OR, for a better experience (hot reloading), use a local server:
+    OR, for a better experience (hot reloading):
     ```bash
-    # Python
-    python -m http.server 8000
-    
-    # Node.js (http-server)
     npx http-server .
     ```
 
-3.  **Run Tests:**
+4.  **Run Tests:**
     We use Node.js for testing the agent logic.
     ```bash
-    node tests/test_difficulty_dial.js
-    node tests/test_dopamine_dj.js
+    # Run all tests
+    npm test
+    
+    # Or specific suites
+    node tests/test_games.js
+    node tests/test_hyperfocus.js
     ```
 
 ## 🎮 How to Play
 
 1.  **Select Your Energy:** Tell the arcade how you're feeling (Low/Medium/High).
-2.  **Choose a Category:** Pick a game type (e.g., Focus Primers).
+2.  **Choose a Category:** Pick a game type.
 3.  **Play:**
     *   **Pattern Blitz:** Find the odd shape out.
-    *   **Color Cascade:** Remember the sequence.
+    *   **Stroop Challenge:** Match the INK color, not the word.
+    *   **Dual N-Back:** Match the position from N turns ago.
     *   **Number Rush:** Speed math.
 4.  **Watch the Agents Work:**
     *   If you're too fast, the game speeds up (🚀 Level Up!).
     *   If you struggle, it slows down (🛡️ Easing Off...).
-    *   Keep your streak up to earn **Jackpot Coins**!
+    *   If you enter **Flow State**, the UI dims to protect your focus.
 
 ## 📂 Documentation
 
 *   **[Architecture Overview](docs/ARCHITECTURE.md):** System design and data flow.
 *   **[Agent Systems](docs/AGENTS.md):** Deep dive into the AI logic.
-*   **[Analysis Report](ANALYSIS_REPORT.md):** Technical analysis of the difficulty logic.
+*   **[Game Manual](docs/GAMES.md):** Detailed rules for all micro-games.
 
 ## 🤝 Contributing
 
