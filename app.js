@@ -653,6 +653,20 @@ class UltimateADHDBrainArcade {
             this.dopamineDJ.initializeSession(currentWallet);
         }
 
+        // Initialize Hyperfocus Protector
+        if (typeof HyperfocusProtector !== 'undefined') {
+            if (!this.hyperfocusProtector) {
+                this.hyperfocusProtector = new HyperfocusProtector({
+                    flowThreshold: {
+                        streak: 5,
+                        avgTime: 1200,
+                        variance: 250
+                    }
+                });
+            }
+            this.hyperfocusProtector.reset();
+        }
+
         this.currentSession.gameData = {};
         this.currentSession.responseTimes = [];
         this.currentSession.mistakes = [];
@@ -1354,15 +1368,41 @@ class UltimateADHDBrainArcade {
         data.currentIndex++;
     }
 
-    // Stub implementations for remaining games
-    initDualNBack(container) { if (container) container.innerHTML = `<div style="text-align: center;"><h3>🧠 Dual N-Back</h3><p>Advanced working memory training!</p></div>`; }
-    startDualNBack() {}
+    // STROOP CHALLENGE
+    initStroopChallenge(container) {
+        if (!container) return;
+        // Use external module if available
+        if (typeof StroopChallenge !== 'undefined') {
+            this.activeGameModule = new StroopChallenge(container, this);
+            this.activeGameModule.init();
+        } else {
+            container.innerHTML = `<div style="text-align: center;"><h3>🌈 Stroop Challenge</h3><p>Module missing!</p></div>`;
+        }
+    }
     
-    initFlankerTask(container) { if (container) container.innerHTML = `<div style="text-align: center;"><h3>🎯 Flanker Task</h3><p>Focus on the center arrow!</p></div>`; }
-    startFlankerTask() {}
+    startStroopChallenge() {
+        if (this.activeGameModule) {
+            this.activeGameModule.start();
+        }
+    }
     
-    initStroopChallenge(container) { if (container) container.innerHTML = `<div style="text-align: center;"><h3>🌈 Stroop Challenge</h3><p>Say the color, not the word!</p></div>`; }
-    startStroopChallenge() {}
+    // DUAL N-BACK
+    initDualNBack(container) {
+        if (!container) return;
+        // Use external module if available
+        if (typeof DualNBack !== 'undefined') {
+            this.activeGameModule = new DualNBack(container, this);
+            this.activeGameModule.init();
+        } else {
+            container.innerHTML = `<div style="text-align: center;"><h3>🧠 Dual N-Back</h3><p>Module missing!</p></div>`;
+        }
+    }
+    
+    startDualNBack() {
+        if (this.activeGameModule) {
+            this.activeGameModule.start();
+        }
+    }
     
     initRhythmSync(container) { if (container) container.innerHTML = `<div style="text-align: center;"><h3>🎵 Rhythm Sync</h3><p>Tap to the beat!</p></div>`; }
     startRhythmSync() {}
@@ -1464,6 +1504,17 @@ class UltimateADHDBrainArcade {
         
         this.updateLiveFeedback();
         
+        // Use Hyperfocus Protector
+        if (this.hyperfocusProtector) {
+            const flowAnalysis = this.hyperfocusProtector.recordResponse(isCorrect, responseTime);
+            
+            if (flowAnalysis.action === 'enter_flow') {
+                this.enterFlowState();
+            } else if (flowAnalysis.action === 'exit_flow') {
+                this.exitFlowState();
+            }
+        }
+
         // Use Agent for difficulty adaptation
         if (this.difficultyDial && this.playerState.settings.adaptiveDifficulty) {
             const analysis = this.difficultyDial.recordResponse(isCorrect, responseTime);
@@ -1522,6 +1573,114 @@ class UltimateADHDBrainArcade {
                 this.updateWalletDisplay();
             }
         }
+    }
+
+    enterFlowState() {
+        const hud = document.getElementById('game-stats-bar');
+        const header = document.querySelector('header');
+        
+        if (hud) {
+            hud.style.transition = 'opacity 0.5s ease-out';
+            hud.style.opacity = '0.2'; // Dim but don't hide completely (safety)
+        }
+        
+        if (header) {
+            header.style.transition = 'transform 0.5s ease-out';
+            header.style.transform = 'translateY(-100%)'; // Slide up
+        }
+        
+        this.showFeedback('🌊 Flow State Detected', 'success');
+        
+        // Subtle ambient particle effect
+        if (this.particleSystem && this.playerState.settings.particlesEnabled !== false) {
+            // We could add a persistent ambient effect here in the future
+        }
+    }
+
+    exitFlowState() {
+        const hud = document.getElementById('game-stats-bar');
+        const header = document.querySelector('header');
+        
+        if (hud) {
+            hud.style.opacity = '1';
+        }
+        
+        if (header) {
+            header.style.transform = 'translateY(0)';
+        }
+        
+        // If flow exit was due to error, trigger gentle recovery
+        if (this.currentSession.currentStreak === 0) {
+            this.triggerRecoveryMode();
+        }
+    }
+
+    triggerRecoveryMode() {
+        // Pause game logic if possible (depends on game module)
+        if (this.activeGameModule && this.activeGameModule.stop) {
+            this.activeGameModule.stop();
+        }
+        
+        // Show Breathing Overlay
+        const overlay = document.createElement('div');
+        overlay.id = 'recovery-overlay';
+        overlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease-out;
+        `;
+        
+        overlay.innerHTML = `
+            <div style="text-align: center; color: white;">
+                <div class="breathing-circle" style="
+                    width: 150px; 
+                    height: 150px; 
+                    border: 4px solid var(--color-primary); 
+                    border-radius: 50%; 
+                    margin: 0 auto 20px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    animation: breathe 4s infinite ease-in-out;
+                ">
+                    <span style="font-size: 2rem;">💨</span>
+                </div>
+                <h2>Pause & Breathe</h2>
+                <p style="margin-bottom: 30px; opacity: 0.8;">Let's get that rhythm back.</p>
+                <button id="resume-btn" class="btn btn--primary">Ready to Resume</button>
+            </div>
+            <style>
+                @keyframes breathe {
+                    0%, 100% { transform: scale(1); opacity: 0.8; }
+                    50% { transform: scale(1.3); opacity: 1; }
+                }
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+            </style>
+        `;
+        
+        document.body.appendChild(overlay);
+        
+        const resumeBtn = document.getElementById('resume-btn');
+        resumeBtn.addEventListener('click', () => {
+            document.body.removeChild(overlay);
+            // Resume game
+            if (this.activeGameModule && this.activeGameModule.start) {
+                this.activeGameModule.start();
+            }
+            this.hyperfocusProtector.reset();
+        });
     }
 
     addScore(points) {
@@ -2116,6 +2275,22 @@ class UltimateADHDBrainArcade {
 
     // UTILITY METHODS
 
+    endGame() {
+        if (this.currentSession.interval) clearInterval(this.currentSession.interval);
+        
+        // Stop any active game module
+        if (this.activeGameModule) {
+            if (this.activeGameModule.stop) this.activeGameModule.stop();
+            this.activeGameModule = null;
+        }
+
+        this.calculateResults();
+        this.updatePlayerProgress();
+        this.saveState();
+        
+        this.showScreen('game-results');
+    }
+    
     handleKeyPress(e) {
         if (e.key === 'Escape') {
             const statsModal = document.getElementById('stats-modal');

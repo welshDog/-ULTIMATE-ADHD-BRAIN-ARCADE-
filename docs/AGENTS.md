@@ -18,17 +18,6 @@ It uses a sliding window (N=5) to analyze player performance in real-time.
 | **Mastery** | 100% Accuracy AND Avg Time < 600ms | **Increase Difficulty** | "🚀 Level Up!" |
 | **Flow** | Consistent Accuracy & Moderate Speed | **Maintain Level** | (None) |
 
-### Configuration
-```javascript
-new DifficultyDial({
-    windowSize: 5,           // Rolling window
-    boredomThresholdMs: 600, // Speed threshold for mastery
-    frustrationThreshold: 3, // Error count for frustration
-    minDifficulty: 1,
-    maxDifficulty: 10
-})
-```
-
 ---
 
 ## 2. 🪙 Dopamine DJ (Reward System)
@@ -47,23 +36,27 @@ It tracks "Momentum" (speed + consistency) to adjust the probability of a reward
     *   🥈 **Silver:** 5 Coins (Uncommon - Streak > 5)
     *   💰 **Gold (Jackpot):** 10 Coins (Rare - Streak > 10 or Lucky Roll)
 
-### Configuration
-```javascript
-new DopamineDJ({
-    baseDropChance: 0.15,
-    streakMultiplier: 0.05,
-    maxDropChance: 0.80,
-    coinValues: [1, 5, 10]
-})
-```
+---
+
+## 3. 🛡️ Hyperfocus Protector (State Agent)
+**File:** `agents/HyperfocusProtector.js`
+
+### Purpose
+Detects when the user has entered a "Flow State" (Hyperfocus) and actively modifies the environment to sustain it.
+
+### Logic
+It analyzes the **Variance** of response times. Low variance indicates rhythmic, automatic processing (Flow).
+
+*   **Enter Flow:** High Accuracy + Low Latency Variance (< 250ms deviation).
+    *   **Action:** Dims UI distractions (Score, Timer), hides Navigation.
+*   **Exit Flow (Natural):** Variance increases or speed drops.
+    *   **Action:** Restore UI.
+*   **Exit Flow (Error):** Streak broken.
+    *   **Action:** Trigger **Graceful Recovery Mode** (Breathing exercise) instead of "Game Over".
 
 ---
 
 ## 🔜 Upcoming Agents
-
-### 🛡️ Hyperfocus Protector (State Agent)
-*   **Goal:** Detect "Flow State" (rapid, rhythmic inputs).
-*   **Action:** Automatically hide UI distractions (score, timer) and extend the session duration to let the user ride the wave.
 
 ### 👯 Body Double (Coach Agent)
 *   **Goal:** Provide social reinforcement.
