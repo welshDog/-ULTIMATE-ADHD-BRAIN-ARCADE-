@@ -28,7 +28,8 @@ class ParticleSystem {
             colors: {
                 gold: ['#FFD700', '#FFA500', '#FFFF00'],
                 silver: ['#C0C0C0', '#E8E8E8', '#A9A9A9'],
-                confetti: ['#FF6B35', '#4ECDC4', '#FFD700', '#FF00FF', '#00FFFF']
+                confetti: ['#FF6B35', '#4ECDC4', '#FFD700', '#FF00FF', '#00FFFF'],
+                ripple: ['rgba(78, 205, 196, 0.5)', 'rgba(255, 107, 107, 0.5)']
             }
         };
 
@@ -71,6 +72,11 @@ class ParticleSystem {
     emit(x, y, type = 'confetti', count = 50) {
         if (this.particles.length > this.config.maxParticles) return;
 
+        if (type === 'ripple') {
+            this.emitRipple(x, y);
+            return;
+        }
+
         const colors = this.config.colors[type === 'coins' ? 'gold' : type] || this.config.colors.confetti;
 
         for (let i = 0; i < count; i++) {
@@ -93,6 +99,26 @@ class ParticleSystem {
         }
     }
 
+    emitRipple(x, y) {
+        this.particles.push({
+            x: x,
+            y: y,
+            vx: 0,
+            vy: 0,
+            size: 10,
+            maxSize: 150,
+            color: this.config.colors.ripple[0],
+            life: 1.0,
+            decay: 0.02,
+            type: 'ripple'
+        });
+
+        if (!this.isActive) {
+            this.isActive = true;
+            this.animate();
+        }
+    }
+
     animate() {
         if (!this.isActive) return;
 
@@ -102,25 +128,36 @@ class ParticleSystem {
         for (let i = this.particles.length - 1; i >= 0; i--) {
             const p = this.particles[i];
 
-            // Physics
-            p.x += p.vx;
-            p.y += p.vy;
-            p.vy += this.config.gravity;
-            p.vx *= this.config.drag;
-            p.life -= p.decay;
-
-            // Render
-            this.ctx.globalAlpha = p.life;
-            this.ctx.fillStyle = p.color;
-            
-            if (p.type === 'coins') {
-                // Circle for coins
+            if (p.type === 'ripple') {
+                // Ripple expansion logic
+                p.size += 3;
+                p.life -= p.decay;
+                
                 this.ctx.beginPath();
                 this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                this.ctx.fill();
+                this.ctx.strokeStyle = p.color;
+                this.ctx.lineWidth = 4 * p.life;
+                this.ctx.globalAlpha = p.life;
+                this.ctx.stroke();
             } else {
-                // Square for confetti
-                this.ctx.fillRect(p.x, p.y, p.size, p.size);
+                // Physics for standard particles
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += this.config.gravity;
+                p.vx *= this.config.drag;
+                p.life -= p.decay;
+
+                // Render
+                this.ctx.globalAlpha = p.life;
+                this.ctx.fillStyle = p.color;
+                
+                if (p.type === 'coins') {
+                    this.ctx.beginPath();
+                    this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    this.ctx.fill();
+                } else {
+                    this.ctx.fillRect(p.x, p.y, p.size, p.size);
+                }
             }
 
             // Remove dead particles

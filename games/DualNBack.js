@@ -150,6 +150,17 @@ class DualNBack {
                 indicator.textContent = "MATCH CONFIRMED";
                 indicator.style.color = "var(--color-success)";
             }
+
+            // Trigger Brain Wave Ripple
+            if (this.engine.particleSystem && this.engine.playerState.settings.particlesEnabled !== false) {
+                const grid = document.getElementById('nback-grid');
+                if (grid) {
+                    const rect = grid.getBoundingClientRect();
+                    const cx = rect.left + rect.width / 2;
+                    const cy = rect.top + rect.height / 2;
+                    this.engine.particleSystem.emit(cx, cy, 'ripple', 1);
+                }
+            }
         } else {
             // False Alarm
             this.engine.showFeedback('False Alarm', 'error');
