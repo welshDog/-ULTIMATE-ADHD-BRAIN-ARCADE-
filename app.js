@@ -221,9 +221,10 @@ class UltimateADHDBrainArcade {
             gameStats: {},
             dailyStreak: 0,
             lastPlayDate: null,
-            preferences: {
+            settings: {
                 soundEnabled: true,
                 musicEnabled: true,
+                particlesEnabled: true,
                 adaptiveDifficulty: true,
                 showHints: true
             }
@@ -388,6 +389,7 @@ class UltimateADHDBrainArcade {
         // Audio controls
         const toggleSoundBtn = document.getElementById('toggle-sound');
         const toggleMusicBtn = document.getElementById('toggle-music');
+        const toggleParticlesBtn = document.getElementById('toggle-particles');
         
         if (toggleSoundBtn) {
             toggleSoundBtn.addEventListener('click', (e) => {
@@ -400,6 +402,13 @@ class UltimateADHDBrainArcade {
             toggleMusicBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 this.toggleMusic();
+            });
+        }
+
+        if (toggleParticlesBtn) {
+            toggleParticlesBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.toggleParticles();
             });
         }
 
@@ -607,6 +616,13 @@ class UltimateADHDBrainArcade {
         this.currentSession.totalAttempts = 0;
         this.currentSession.currentStreak = 0;
         
+        // Initialize Particle System
+        if (typeof ParticleSystem !== 'undefined') {
+            if (!this.particleSystem) {
+                this.particleSystem = new ParticleSystem();
+            }
+        }
+
         // Initialize Difficulty Dial Agent
         if (typeof DifficultyDial !== 'undefined') {
             if (!this.difficultyDial) {
@@ -622,6 +638,19 @@ class UltimateADHDBrainArcade {
         } else {
             // Fallback if agent not loaded
             this.currentSession.difficulty = this.calculateInitialDifficulty(game.name);
+        }
+
+        // Initialize Dopamine DJ Agent
+        if (typeof DopamineDJ !== 'undefined') {
+            if (!this.dopamineDJ) {
+                this.dopamineDJ = new DopamineDJ({
+                    baseDropChance: 0.15,
+                    streakMultiplier: 0.05
+                });
+            }
+            // Sync wallet from player state (if persisted) or start fresh
+            const currentWallet = this.playerState.wallet || 0;
+            this.dopamineDJ.initializeSession(currentWallet);
         }
 
         this.currentSession.gameData = {};
@@ -1436,7 +1465,7 @@ class UltimateADHDBrainArcade {
         this.updateLiveFeedback();
         
         // Use Agent for difficulty adaptation
-        if (this.difficultyDial && this.playerState.preferences.adaptiveDifficulty) {
+        if (this.difficultyDial && this.playerState.settings.adaptiveDifficulty) {
             const analysis = this.difficultyDial.recordResponse(isCorrect, responseTime);
             
             if (analysis.action !== 'maintain') {
@@ -1448,6 +1477,13 @@ class UltimateADHDBrainArcade {
                     const msg = analysis.action === 'increase' ? '🚀 Level Up!' : '🛡️ Easing Off...';
                     this.showFeedback(msg, analysis.action === 'increase' ? 'success' : 'warning');
                     
+                    // Trigger visual particles for level up
+                    if (analysis.action === 'increase' && this.particleSystem && this.playerState.settings.particlesEnabled !== false) {
+                        const cx = window.innerWidth / 2;
+                        const cy = window.innerHeight / 2;
+                        this.particleSystem.emit(cx, cy, 'confetti', 30);
+                    }
+                    
                     // Update UI immediately
                     const diffEl = document.getElementById('current-difficulty');
                     if (diffEl) diffEl.textContent = `Level ${this.currentSession.difficulty}`;
@@ -1456,6 +1492,35 @@ class UltimateADHDBrainArcade {
         } else {
             // Fallback to legacy logic
             this.adaptDifficulty();
+        }
+
+        // Use Dopamine DJ for rewards
+        if (this.dopamineDJ && isCorrect) {
+            const reward = this.dopamineDJ.processResponse(isCorrect, responseTime, this.currentSession.currentStreak);
+            
+            if (reward.drop) {
+                this.showFeedback(reward.message, 'success'); // Reuse success feedback for now
+                this.playSound('achievement'); // Reuse sound
+                
+                // Trigger visual particles
+                if (this.particleSystem && this.playerState.settings.particlesEnabled !== false) {
+                    const cx = window.innerWidth / 2;
+                    const cy = window.innerHeight / 2;
+                    
+                    if (reward.type === 'gold') {
+                        this.particleSystem.emit(cx, cy, 'coins', 50);
+                        this.particleSystem.celebrate();
+                    } else if (reward.type === 'silver') {
+                        this.particleSystem.emit(cx, cy, 'coins', 20);
+                    } else {
+                        this.particleSystem.emit(cx, cy, 'sparkles', 10);
+                    }
+                }
+                
+                // Update Wallet UI
+                this.playerState.wallet = reward.totalWallet;
+                this.updateWalletDisplay();
+            }
         }
     }
 
@@ -1847,6 +1912,8 @@ class UltimateADHDBrainArcade {
         if (achievementsElement) {
             achievementsElement.textContent = `${this.playerState.completedAchievements.length}/${this.achievementDatabase.length}`;
         }
+
+        this.updateWalletDisplay();
         
         // Update category progress
         Object.keys(this.playerState.categoryProgress).forEach(category => {
@@ -1857,6 +1924,13 @@ class UltimateADHDBrainArcade {
                 progressElement.style.width = `${progress.mastery}%`;
             }
         });
+    }
+
+    updateWalletDisplay() {
+        const walletElement = document.getElementById('wallet-balance');
+        if (walletElement) {
+            walletElement.textContent = `🪙 ${this.playerState.wallet || 0}`;
+        }
     }
 
     // MODAL AND UI METHODS
@@ -1959,7 +2033,7 @@ class UltimateADHDBrainArcade {
     }
 
     playSound(soundType) {
-        if (!this.playerState.preferences.soundEnabled || !this.audioContext) return;
+        if (!this.playerState.settings.soundEnabled || !this.audioContext) return;
         
         // Generate different tones for different sound types
         const frequencies = {
@@ -2018,11 +2092,25 @@ class UltimateADHDBrainArcade {
     }
 
     toggleMusic() {
-        this.playerState.preferences.musicEnabled = !this.playerState.preferences.musicEnabled;
+        this.playerState.settings.musicEnabled = !this.playerState.settings.musicEnabled;
         const btn = document.getElementById('toggle-music');
         if (btn) {
-            btn.classList.toggle('muted', !this.playerState.preferences.musicEnabled);
-            btn.textContent = this.playerState.preferences.musicEnabled ? '🎵' : '🎵';
+            btn.textContent = this.playerState.settings.musicEnabled ? '🎵' : '🔇';
+            btn.classList.toggle('off', !this.playerState.settings.musicEnabled);
+        }
+    }
+
+    toggleParticles() {
+        this.playerState.settings.particlesEnabled = !this.playerState.settings.particlesEnabled;
+        const btn = document.getElementById('toggle-particles');
+        if (btn) {
+            btn.textContent = this.playerState.settings.particlesEnabled ? '✨' : '🌑';
+            btn.classList.toggle('off', !this.playerState.settings.particlesEnabled);
+        }
+        
+        // Disable particle system if toggled off
+        if (this.particleSystem) {
+            this.particleSystem.isActive = false;
         }
     }
 

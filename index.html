@@ -28,6 +28,10 @@
                     <span class="stat-label">Achievements</span>
                     <span id="achievements-count" class="stat-value">0/25</span>
                 </div>
+                <div class="stat-item">
+                    <span class="stat-label">Coins</span>
+                    <span id="wallet-balance" class="stat-value">🪙 0</span>
+                </div>
             </div>
         </header>
 
@@ -425,10 +429,13 @@
     <div class="audio-controls">
         <button class="audio-btn" id="toggle-sound" title="Toggle Sound">🔊</button>
         <button class="audio-btn" id="toggle-music" title="Toggle Music">🎵</button>
+        <button class="audio-btn" id="toggle-particles" title="Toggle Effects">✨</button>
     </div>
 
-    <!-- Agents -->
+    <!-- Agents & Systems -->
+    <script src="systems/ParticleSystem.js"></script>
     <script src="agents/DifficultyDial.js"></script>
+    <script src="agents/DopamineDJ.js"></script>
     <!-- Main App -->
     <script src="app.js"></script>
 </body>
