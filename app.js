@@ -1354,15 +1354,41 @@ class UltimateADHDBrainArcade {
         data.currentIndex++;
     }
 
-    // Stub implementations for remaining games
-    initDualNBack(container) { if (container) container.innerHTML = `<div style="text-align: center;"><h3>🧠 Dual N-Back</h3><p>Advanced working memory training!</p></div>`; }
-    startDualNBack() {}
+    // STROOP CHALLENGE
+    initStroopChallenge(container) {
+        if (!container) return;
+        // Use external module if available
+        if (typeof StroopChallenge !== 'undefined') {
+            this.activeGameModule = new StroopChallenge(container, this);
+            this.activeGameModule.init();
+        } else {
+            container.innerHTML = `<div style="text-align: center;"><h3>🌈 Stroop Challenge</h3><p>Module missing!</p></div>`;
+        }
+    }
     
-    initFlankerTask(container) { if (container) container.innerHTML = `<div style="text-align: center;"><h3>🎯 Flanker Task</h3><p>Focus on the center arrow!</p></div>`; }
-    startFlankerTask() {}
+    startStroopChallenge() {
+        if (this.activeGameModule) {
+            this.activeGameModule.start();
+        }
+    }
     
-    initStroopChallenge(container) { if (container) container.innerHTML = `<div style="text-align: center;"><h3>🌈 Stroop Challenge</h3><p>Say the color, not the word!</p></div>`; }
-    startStroopChallenge() {}
+    // DUAL N-BACK
+    initDualNBack(container) {
+        if (!container) return;
+        // Use external module if available
+        if (typeof DualNBack !== 'undefined') {
+            this.activeGameModule = new DualNBack(container, this);
+            this.activeGameModule.init();
+        } else {
+            container.innerHTML = `<div style="text-align: center;"><h3>🧠 Dual N-Back</h3><p>Module missing!</p></div>`;
+        }
+    }
+    
+    startDualNBack() {
+        if (this.activeGameModule) {
+            this.activeGameModule.start();
+        }
+    }
     
     initRhythmSync(container) { if (container) container.innerHTML = `<div style="text-align: center;"><h3>🎵 Rhythm Sync</h3><p>Tap to the beat!</p></div>`; }
     startRhythmSync() {}
@@ -2116,6 +2142,22 @@ class UltimateADHDBrainArcade {
 
     // UTILITY METHODS
 
+    endGame() {
+        if (this.currentSession.interval) clearInterval(this.currentSession.interval);
+        
+        // Stop any active game module
+        if (this.activeGameModule) {
+            if (this.activeGameModule.stop) this.activeGameModule.stop();
+            this.activeGameModule = null;
+        }
+
+        this.calculateResults();
+        this.updatePlayerProgress();
+        this.saveState();
+        
+        this.showScreen('game-results');
+    }
+    
     handleKeyPress(e) {
         if (e.key === 'Escape') {
             const statsModal = document.getElementById('stats-modal');
